@@ -37,7 +37,7 @@ public class SupplierResource {
 
     @PostMapping
     public ResponseEntity add(
-            @Valid @ModelAttribute Supplier supplier
+            @Valid @RequestBody Supplier supplier
     ) throws URISyntaxException {
         if (supplier != null) {
             supplierRepo.save(supplier);
@@ -48,12 +48,23 @@ public class SupplierResource {
 
     @PutMapping
     public ResponseEntity update(
-            @Valid @ModelAttribute Supplier supplier
+            @Valid @RequestBody Supplier supplier
     ) {
         if (supplier != null) {
             supplierRepo.save(supplier);
             return ResponseEntity.ok().body(supplier);
         }
         return ResponseEntity.badRequest().body("Please check your entries");
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity delete (
+            @PathVariable Long id
+    ) {
+        if(id != null) {
+            supplierRepo.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.badRequest().body("Incorrect supplier id");
     }
 }

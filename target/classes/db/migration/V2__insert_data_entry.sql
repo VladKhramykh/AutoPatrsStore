@@ -1,0 +1,2 @@
+insert into company (id, name, director_name, office_address, tel_number, description )
+    values (1, 'Магазин автозапчастей "Антилопа Гну"', 'Храмых Владислав Олегович', 'г. Минск, ул.Белорусская 21', '+375298207908', 'Some description');

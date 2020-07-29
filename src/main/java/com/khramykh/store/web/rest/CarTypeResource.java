@@ -47,13 +47,11 @@ public class CarTypeResource {
         return ResponseEntity.badRequest().body("Please check your entries");
     }
 
-    @PutMapping("{id}")
+    @PutMapping
     public ResponseEntity update(
-            @PathVariable Long id,
             @Valid @RequestBody CarType carType
     ) {
         if (carType != null) {
-            carType.setId(id);
             carTypeRepo.save(carType);
             return ResponseEntity.ok().body(carType);
         }

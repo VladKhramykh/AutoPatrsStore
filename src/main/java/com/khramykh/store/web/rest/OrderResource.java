@@ -37,7 +37,7 @@ public class OrderResource {
 
     @PostMapping
     public ResponseEntity add(
-            @Valid @ModelAttribute Order order
+            @Valid @RequestBody Order order
     ) throws URISyntaxException {
         if (order != null) {
             orderRepo.save(order);
@@ -48,12 +48,23 @@ public class OrderResource {
 
     @PutMapping
     public ResponseEntity update(
-            @Valid @ModelAttribute Order order
+            @Valid @RequestBody Order order
     ) {
         if (order != null) {
             orderRepo.save(order);
             return ResponseEntity.ok().body(order);
         }
         return ResponseEntity.badRequest().body("Please check your entries");
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity delete (
+            @PathVariable Long id
+    ) {
+        if(id != null) {
+            orderRepo.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.badRequest().body("Incorrect order id");
     }
 }

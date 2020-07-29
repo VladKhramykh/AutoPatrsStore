@@ -5,13 +5,11 @@ import com.khramykh.store.exception.BadRequestAlertException;
 import com.khramykh.store.exception.UserNotFoundException;
 import com.khramykh.store.repository.UserRepo;
 import com.khramykh.store.service.UserService;
-import com.khramykh.store.service.dto.UserRegistrationDTO;
 import com.khramykh.store.service.dto.UserProfileDTO;
+import com.khramykh.store.service.dto.UserRegistrationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,12 +31,11 @@ public class UserResource {
     private static final String URI = "http://localhost:8081/api/users";
 
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity index() {
         return ResponseEntity.ok().body(userRepo.findAll());
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
     public User getOne(
             @PathVariable Long id
     ) {
@@ -48,15 +45,15 @@ public class UserResource {
         throw new UserNotFoundException();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("{id}")
     public ResponseEntity update(
-            @PathVariable Long id,
-            @Valid @ModelAttribute UserProfileDTO userProfileDTO,
+            @Valid @RequestBody UserProfileDTO userProfileDTO,
             @AuthenticationPrincipal User user
     ) {
         if (userProfileDTO == null) {
             throw new UserNotFoundException();
         }
+        System.out.println(userProfileDTO.getId());
         User updated = userService.updateUser(user, userProfileDTO);
         return ResponseEntity
                 .ok()
@@ -64,7 +61,7 @@ public class UserResource {
 
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
     public ResponseEntity delete(
             @PathVariable Long id
     ) {

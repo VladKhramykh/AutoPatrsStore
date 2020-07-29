@@ -5,8 +5,9 @@ import com.khramykh.store.repository.CarMarkRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
@@ -24,9 +25,9 @@ public class CarMarksResource {
 
     @GetMapping("/{id}")
     public ResponseEntity getOne(
-            @PathVariable String name
+            @PathVariable Long id
     ) {
-        Optional<CarMark> carMark = carMarkRepo.findById(name);
+        Optional<CarMark> carMark = carMarkRepo.findById(id);
         if (carMark.isPresent()) {
             return ResponseEntity.ok().body(carMark);
         }
@@ -35,25 +36,47 @@ public class CarMarksResource {
 
     @PostMapping
     public ResponseEntity add(
-            @Valid @ModelAttribute CarMark carMark
-    ) throws URISyntaxException {
-        if (carMark != null) {
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "logo", required = false) MultipartFile logo
+    ) throws URISyntaxException, IOException {
+        if (name != null) {
+            CarMark carMark = new CarMark();
+            carMark.setName(name);
+            if (logo != null)
+                carMark.setLogo(logo.getBytes());
             carMarkRepo.save(carMark);
-            return ResponseEntity.created(new URI("/api/users/" + carMark.getName())).build();
+            CarMark created = carMarkRepo.findByName(carMark.getName());
+            return ResponseEntity.created(new URI("/api/car-marks/" + created.getId())).body(created);
         }
         return ResponseEntity.badRequest().body("Please check your entries");
     }
 
     @PutMapping
     public ResponseEntity update(
-            @Valid @ModelAttribute CarMark carMark
-    ) {
-        if (carMark != null) {
+            @RequestParam(name = "id") Long id,
+            @RequestParam(name = "name") String name,
+            @RequestParam(name = "logo", required = false) MultipartFile logo
+    ) throws IOException {
+        if (id != null) {
+            CarMark carMark = new CarMark();
+            carMark.setName(name);
+            if (logo != null) {
+                carMark.setLogo(logo.getBytes());
+            }
             carMarkRepo.save(carMark);
-            return ResponseEntity.ok().body(carMark);
+            return ResponseEntity.ok(carMark);
         }
         return ResponseEntity.badRequest().body("Please check your entries");
     }
 
-
+    @DeleteMapping("{id}")
+    public ResponseEntity delete (
+            @PathVariable Long id
+    ) {
+        if(id != null) {
+            carMarkRepo.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.badRequest().body("Incorrect mark id");
+    }
 }

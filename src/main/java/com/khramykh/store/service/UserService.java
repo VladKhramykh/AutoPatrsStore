@@ -5,10 +5,9 @@ import com.khramykh.store.domain.orgs.User;
 import com.khramykh.store.exception.EmailAlreadyUsedException;
 import com.khramykh.store.exception.UserNotFoundException;
 import com.khramykh.store.repository.UserRepo;
-import com.khramykh.store.service.dto.UserRegistrationDTO;
 import com.khramykh.store.service.dto.UserProfileDTO;
+import com.khramykh.store.service.dto.UserRegistrationDTO;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,8 +33,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        User user = userRepo.findByEmail(email);
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("loadUserByUsername - " + username);
+        User user = userRepo.findByEmail(username);
         if (user == null)
             throw new UsernameNotFoundException("User not found");
         return user;
@@ -66,7 +66,9 @@ public class UserService implements UserDetailsService {
                 // sendActivationCode;
             }
         }
-
+        user.setFirstName(userProfileDTO.getFirstName());
+        user.setLastName(userProfileDTO.getLastName());
+        user.setAddress(userProfileDTO.getAddress());
 
         return userRepo.save(user);
     }

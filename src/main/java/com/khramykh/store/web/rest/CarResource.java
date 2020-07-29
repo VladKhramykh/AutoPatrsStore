@@ -37,12 +37,37 @@ public class CarResource {
 
     @PostMapping
     public ResponseEntity add(
-            @Valid @ModelAttribute Car car
+            @Valid @RequestBody Car car
     ) throws URISyntaxException {
         if (car != null) {
             carRepo.save(car);
             return ResponseEntity.created(new URI(URI)).body(car);
         }
         return ResponseEntity.badRequest().body(new BadRequestAlertException("Bad request"));
+
+    }
+
+    @PutMapping
+    public ResponseEntity update(
+            @Valid @RequestBody Car car
+    ) throws URISyntaxException {
+        if (car != null) {
+            if(car.getId() != null)
+                carRepo.save(car);
+            return ResponseEntity.created(new URI(URI)).body(car);
+        }
+        return ResponseEntity.badRequest().body(new BadRequestAlertException("Bad request"));
+
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity delete (
+            @PathVariable Long id
+    ) {
+        if(id != null) {
+            carRepo.deleteById(id);
+            return ResponseEntity.noContent().build();
+        }
+        return ResponseEntity.badRequest().body("Incorrect car id");
     }
 }

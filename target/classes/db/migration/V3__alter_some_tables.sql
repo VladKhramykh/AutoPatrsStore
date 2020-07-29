@@ -1,0 +1,10 @@
+alter table cars
+    add engine_type varchar(50);
+alter table cars
+    add engine_volume int;
+alter table cars
+    add transmission_type varchar(50);
+alter table parts
+    add name varchar(255);
+alter table parts
+    add price numeric(19,2);
